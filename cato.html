@@ -1,0 +1,103 @@
+<html>
+
+</html>
+<!-- Code from d3-graph-gallery.com -->
+<!DOCTYPE html>
+
+<head> REPRESENTATION DE LA CARTE DE LA CEDEAO</head>
+<meta charset="utf-8">
+
+<!-- Load d3.js and the geo projection plugin -->
+<script src="https://d3js.org/d3.v4.js"></script>
+<script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+  integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3-scale-radial.js"></script>
+
+</head>
+<h4> CARTE DES PAYS DE LA CEDEAO UTILISANT L' INTERNET DE 2010 EN 2014:
+</h4>
+  
+<body>
+    
+  <form>
+    <select class="form-control col-md-4" id="choix" onchange="bubble()">
+      <option selected disabled value="">Choisir une annee</option>
+      
+      <option>2010</option>
+      <option>2011</option>
+      <option>2012</option>
+      <option>2013</option>
+      <option>2014</option>
+     
+    </select>
+  </form>
+  
+      <svg id="my_dataviz" style="background-color: rgb(190, 189, 189);" width="805" height="450"></svg>
+    
+</body>
+<script>
+// The svg
+var svg = d3.select("svg"),
+  width = +svg.attr("width"),
+  height = +svg.attr("height");
+
+// Map and projec9ion
+var projection = d3.geoMercator()
+  .center([-3, 13])                // GPS of location to zoom on
+  .scale(1000)                       // This is like the zoom
+  .translate([width / 2, height / 2])
+
+d3.json("data.geojson", function (error, dataGeo) {
+
+  var div = d3
+    .select("#tooltip")
+    .attr("x", width - 600)
+    .attr("y", 0)
+    .style("opacity", 0)
+    ;
+  // Draw the map
+  svg.append("g")
+    .selectAll("path")
+    .data(dataGeo.features)
+    .enter()
+    .append("path")
+    .attr("fill", "white")
+    .attr("d", d3.geoPath()
+      .projection(projection)
+    )
+    .style("stroke-width", 1)
+    .style("stroke", "black")
+    .on("click", function (d, i) {
+      nom = dataGeo.features[i].properties.name;
+      console.log(nom);
+      self.bar(nom)
+
+    })
+    .on("mouseover", function (d, i) {
+      div
+        .transition()
+        .duration(200)
+        .style("opacity", 0.9);
+      div
+        .html(dataGeo.features[i].properties.name)
+        .style("left", d3.event.pageX + 10 + "px")
+        .style("top", d3.event.pageY - 50 + "px");
+    }
+
+    )
+    .on("mouseout", function (d) {
+      div
+        .transition()
+        .duration(500)
+        .style("opacity", 0);
+    });
+
+
+}
+)
+</script>
+
+</html>
